@@ -2,7 +2,7 @@
 
 import { useRef } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { Sparkles } from '@react-three/drei';
+import { Sparkles, Float } from '@react-three/drei';
 import * as THREE from 'three';
 import { motion } from 'framer-motion';
 import { useImpact } from '@/context/ImpactContext';
@@ -13,62 +13,51 @@ function BreathingMesh() {
   const { impactStats } = useImpact();
   
   const score = impactStats.decisionsOverridden;
-  const health = Math.min(score / 10, 1);
-  const targetScale = 2 + Math.min(score * 0.1, 1);
+  const health = Math.min(score / 5, 1); // Maxes out at 5 decisions
 
   useFrame((state) => {
     if (meshRef.current) {
-      // Natural earth rotation
-      meshRef.current.rotation.y += 0.002;
-      meshRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.2) * 0.1;
+      // Slow rotation of the massive wireframe
+      meshRef.current.rotation.y += 0.001;
+      meshRef.current.rotation.z += 0.0005;
       
       const time = state.clock.getElapsedTime();
-      const breathing = Math.sin(time) * 0.05;
-      
-      const currentScale = meshRef.current.scale.x;
-      const nextScale = THREE.MathUtils.lerp(currentScale, targetScale + breathing, 0.05);
-      meshRef.current.scale.set(nextScale, nextScale, nextScale);
+      const breathing = Math.sin(time * 0.5) * 0.15;
+      const scale = 1 + breathing;
+      meshRef.current.scale.set(scale, scale, scale);
     }
 
     if (materialRef.current) {
       // Color shifts from Smoggy Orange to Pure Emerald
-      const r = THREE.MathUtils.lerp(0.9, 0.1, health);
-      const g = THREE.MathUtils.lerp(0.3, 0.8, health);
-      const b = THREE.MathUtils.lerp(0.1, 0.5, health);
+      const r = THREE.MathUtils.lerp(0.85, 0.06, health);
+      const g = THREE.MathUtils.lerp(0.46, 0.72, health);
+      const b = THREE.MathUtils.lerp(0.02, 0.50, health); // #10b981 is roughly 16, 185, 129
       
       const targetColor = new THREE.Color(r, g, b);
       materialRef.current.color.lerp(targetColor, 0.05);
       
-      // Emissive pulse (heartbeat)
-      const pulse = Math.sin(state.clock.elapsedTime * 2) * 0.2 + 0.8;
-      materialRef.current.emissive.lerp(new THREE.Color(r * 0.6, g * 0.6, b * 0.6), 0.05);
-      materialRef.current.emissiveIntensity = pulse;
+      const pulse = Math.sin(state.clock.elapsedTime) * 0.5 + 1.5;
+      materialRef.current.emissive.lerp(targetColor, 0.05);
+      materialRef.current.emissiveIntensity = pulse * 0.5;
     }
   });
 
   return (
-    <mesh ref={meshRef}>
-      <sphereGeometry args={[1.5, 64, 64]} />
-      <meshStandardMaterial
-        ref={materialRef}
-        color="#e65c00"
-        emissive="#803300"
-        roughness={0.4}
-        metalness={0.3}
-        wireframe={score < 2} // Starts as a wireframe, solidifies as you do green actions
-      />
-      {/* Atmosphere Glow */}
-      <mesh>
-        <sphereGeometry args={[1.55, 32, 32]} />
-        <meshBasicMaterial 
-          color={new THREE.Color(0.1, Math.max(0.8, health), 0.5)} 
-          transparent 
-          opacity={0.1 + health * 0.1}
-          side={THREE.BackSide}
-          blending={THREE.AdditiveBlending}
+    <Float speed={2} rotationIntensity={0.5} floatIntensity={1}>
+      <mesh ref={meshRef} position={[0, 0, -8]}>
+        <icosahedronGeometry args={[5, 16]} />
+        <meshPhysicalMaterial
+          ref={materialRef}
+          color="#d97706"
+          emissive="#f59e0b"
+          emissiveIntensity={1}
+          wireframe
+          transparent
+          opacity={0.15}
+          roughness={0.2}
         />
       </mesh>
-    </mesh>
+    </Float>
   );
 }
 
