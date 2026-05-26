@@ -29,10 +29,10 @@ function StepCard({
       transition={{ duration: 0.6, delay: index * 0.18 }}
       className="glass-card spotlight-card glow-green group relative flex flex-col items-center p-8 text-center transition-transform hover:scale-[1.03]"
     >
-      <span className="mb-4 text-5xl">{icon}</span>
-      <div className="absolute -top-3 left-6 flex h-7 w-7 items-center justify-center rounded-full bg-eco-green text-xs font-bold text-white">
+      <div className="absolute top-4 left-4 flex h-7 w-7 items-center justify-center rounded-full bg-eco-green text-xs font-bold text-white">
         {index + 1}
       </div>
+      <span className="mb-4 text-5xl">{icon}</span>
       <h3 className="mb-2 text-xl font-bold text-white">{title}</h3>
       <p className="text-sm leading-relaxed text-gray-400">{desc}</p>
     </motion.div>
