@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Deciduous%20Tree.png" alt="Tree" width="60" />
+  <img src="https://github.githubassets.com/images/icons/emoji/unicode/1f331.png" alt="Seedling" width="60" />
   <h1 align="center">EcoNudge SDK</h1>
   <p align="center">
     <strong>The sustainability layer for every digital platform.</strong><br/>
