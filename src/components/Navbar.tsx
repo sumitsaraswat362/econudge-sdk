@@ -3,6 +3,9 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
+import { useTheme } from 'next-themes';
+import { Moon, Sun } from 'lucide-react';
+import { useState, useEffect } from 'react';
 
 const navLinks = [
   { name: 'Home', path: '/' },
@@ -15,6 +18,10 @@ const navLinks = [
 
 export default function Navbar() {
   const pathname = usePathname();
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
 
   return (
     <motion.nav 
@@ -44,6 +51,17 @@ export default function Navbar() {
             </Link>
           );
         })}
+
+        <div className="w-px h-6 bg-white/20 mx-2" />
+
+        {mounted && (
+          <button
+            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            className="rounded-full p-2 text-gray-400 hover:text-white hover:bg-white/10 transition-colors"
+          >
+            {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+          </button>
+        )}
       </div>
     </motion.nav>
   );

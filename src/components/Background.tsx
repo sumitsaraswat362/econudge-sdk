@@ -2,70 +2,72 @@
 
 import { useRef } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { Float, Sparkles } from '@react-three/drei';
+import { Sparkles } from '@react-three/drei';
 import * as THREE from 'three';
 import { motion } from 'framer-motion';
+import { useImpact } from '@/context/ImpactContext';
 
-function BreathingMesh({ healthRatio }: { healthRatio: number }) {
+function BreathingMesh() {
   const meshRef = useRef<THREE.Mesh>(null);
-  const materialRef = useRef<THREE.MeshPhysicalMaterial>(null);
-
-  // healthRatio is between 0 (polluted) and 1 (healthy)
-  const targetColor = new THREE.Color().lerpColors(
-    new THREE.Color('#d97706'), // polluted orange
-    new THREE.Color('#059669'), // healthy emerald
-    healthRatio
-  );
-  
+  const materialRef = useRef<THREE.MeshStandardMaterial>(null);
   const { impactStats } = useImpact();
   
   const score = impactStats.decisionsOverridden;
-  
-  // Base scale starts at 2, grows up to 3 based on score
-  const targetScale = 2 + Math.min(score * 0.1, 1);
-  
-  // Calculate health from 0 (polluted) to 1 (pure)
   const health = Math.min(score / 10, 1);
+  const targetScale = 2 + Math.min(score * 0.1, 1);
 
   useFrame((state) => {
     if (meshRef.current) {
-      meshRef.current.rotation.x += 0.001;
+      // Natural earth rotation
       meshRef.current.rotation.y += 0.002;
+      meshRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.2) * 0.1;
       
       const time = state.clock.getElapsedTime();
-      const breathing = Math.sin(time * 0.5) * 0.1;
+      const breathing = Math.sin(time) * 0.05;
       
       const currentScale = meshRef.current.scale.x;
       const nextScale = THREE.MathUtils.lerp(currentScale, targetScale + breathing, 0.05);
       meshRef.current.scale.set(nextScale, nextScale, nextScale);
+    }
+
+    if (materialRef.current) {
+      // Color shifts from Smoggy Orange to Pure Emerald
+      const r = THREE.MathUtils.lerp(0.9, 0.1, health);
+      const g = THREE.MathUtils.lerp(0.3, 0.8, health);
+      const b = THREE.MathUtils.lerp(0.1, 0.5, health);
       
-      // Calculate color: Orange/Red (polluted) -> Emerald Green (pure)
-      const r = THREE.MathUtils.lerp(0.8, 0.1, health); // Red decreases
-      const g = THREE.MathUtils.lerp(0.3, 0.8, health); // Green increases
-      const b = THREE.MathUtils.lerp(0.1, 0.4, health); // Blue increases slightly
+      const targetColor = new THREE.Color(r, g, b);
+      materialRef.current.color.lerp(targetColor, 0.05);
       
-      const material = meshRef.current.material as THREE.MeshStandardMaterial;
-      material.color.lerp(new THREE.Color(r, g, b), 0.05);
-      material.emissive.lerp(new THREE.Color(r * 0.5, g * 0.5, b * 0.5), 0.05);
+      // Emissive pulse (heartbeat)
+      const pulse = Math.sin(state.clock.elapsedTime * 2) * 0.2 + 0.8;
+      materialRef.current.emissive.lerp(new THREE.Color(r * 0.6, g * 0.6, b * 0.6), 0.05);
+      materialRef.current.emissiveIntensity = pulse;
     }
   });
 
   return (
     <mesh ref={meshRef}>
-      {score < 5 ? (
-        <icosahedronGeometry args={[1, 1]} />
-      ) : score < 15 ? (
-        <torusKnotGeometry args={[0.8, 0.3, 100, 16]} />
-      ) : (
-        <sphereGeometry args={[1.2, 64, 64]} />
-      )}
+      <sphereGeometry args={[1.5, 64, 64]} />
       <meshStandardMaterial
-        color="#cc4400"
-        emissive="#441100"
-        wireframe={score < 15}
-        roughness={0.2}
-        metalness={0.8}
+        ref={materialRef}
+        color="#e65c00"
+        emissive="#803300"
+        roughness={0.4}
+        metalness={0.3}
+        wireframe={score < 2} // Starts as a wireframe, solidifies as you do green actions
       />
+      {/* Atmosphere Glow */}
+      <mesh>
+        <sphereGeometry args={[1.55, 32, 32]} />
+        <meshBasicMaterial 
+          color={new THREE.Color(0.1, Math.max(0.8, health), 0.5)} 
+          transparent 
+          opacity={0.1 + health * 0.1}
+          side={THREE.BackSide}
+          blending={THREE.AdditiveBlending}
+        />
+      </mesh>
     </mesh>
   );
 }
@@ -88,8 +90,6 @@ function CursorLight() {
     <pointLight ref={lightRef} color="#34d399" intensity={30} distance={15} position={[0,0,2]} />
   );
 }
-
-import { useImpact } from '@/context/ImpactContext';
 
 export default function Background() {
   const { impactStats } = useImpact();
@@ -117,7 +117,7 @@ export default function Background() {
       <div className="absolute inset-0">
         <Canvas camera={{ position: [0, 0, 10], fov: 45 }} dpr={[1, 2]}>
           <ambientLight intensity={0.2} />
-          <BreathingMesh healthRatio={healthRatio} />
+          <BreathingMesh />
           <CursorLight />
           <Sparkles 
             count={300} 

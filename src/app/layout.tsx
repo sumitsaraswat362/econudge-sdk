@@ -4,6 +4,8 @@ import './globals.css';
 import { ImpactProvider } from '@/context/ImpactContext';
 import LayoutClient from '@/components/LayoutClient';
 
+import { ThemeProvider } from '@/components/ThemeProvider';
+
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 const spaceGrotesk = Space_Grotesk({ subsets: ['latin'], variable: '--font-space' });
 
@@ -15,11 +17,13 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable}`}>
-      <body className="antialiased">
-        <ImpactProvider>
-          <LayoutClient>{children}</LayoutClient>
-        </ImpactProvider>
+    <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable}`} suppressHydrationWarning>
+      <body className="antialiased dark:bg-black bg-white transition-colors duration-300">
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
+          <ImpactProvider>
+            <LayoutClient>{children}</LayoutClient>
+          </ImpactProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

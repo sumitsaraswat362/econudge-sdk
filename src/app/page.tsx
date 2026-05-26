@@ -27,7 +27,7 @@ function StepCard({
       initial={{ opacity: 0, y: 40 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.6, delay: index * 0.18 }}
-      className="glass-card glow-green group relative flex flex-col items-center p-8 text-center transition-transform hover:scale-[1.03]"
+      className="glass-card spotlight-card glow-green group relative flex flex-col items-center p-8 text-center transition-transform hover:scale-[1.03]"
     >
       <span className="mb-4 text-5xl">{icon}</span>
       <div className="absolute -top-3 left-6 flex h-7 w-7 items-center justify-center rounded-full bg-eco-green text-xs font-bold text-white">
@@ -44,7 +44,7 @@ function StepCard({
 /* ------------------------------------------------------------------ */
 function HeroStat({ value, label }: { value: string; label: string }) {
   return (
-    <div className="glass-card-light flex flex-col items-center px-5 py-3 sm:px-8">
+    <div className="glass-card-light spotlight-card flex flex-col items-center px-5 py-3 sm:px-8">
       <span className="gradient-text text-xl font-bold sm:text-2xl">{value}</span>
       <span className="mt-0.5 text-xs text-gray-400">{label}</span>
     </div>
@@ -66,7 +66,7 @@ export default function HomePage() {
           className="mb-6 inline-flex items-center gap-2 rounded-full border border-eco-green/20 bg-eco-green/10 px-4 py-1.5 text-sm text-eco-green"
         >
           <span className="pulse-green inline-block h-2 w-2 rounded-full bg-eco-green" />
-          GreenHack 2025 — Live Demo
+          GreenHack 2026 — Live Demo
         </motion.div>
 
         {/* Heading */}
