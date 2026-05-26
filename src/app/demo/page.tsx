@@ -3,9 +3,12 @@
 import { useState, useCallback, useEffect, useMemo, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
+import dynamic from 'next/dynamic';
 import EcoNudgeWidget from '@/components/sdk/EcoNudgeWidget';
 import type { UserAction, GreenAlternative } from '@/lib/types';
 import { useImpact } from '@/context/ImpactContext';
+
+const Map = dynamic(() => import('@/components/Map'), { ssr: false });
 import { geocode, calculateDistance } from '@/lib/geocoding';
 
 // Import our massive generated datasets
@@ -32,24 +35,20 @@ const tabs: DemoTab[] = [
 /*  Dynamic Ride Card                                                  */
 /* ------------------------------------------------------------------ */
 function RideCard({ accent, onBook }: { accent: string; onBook: (action: UserAction) => void }) {
-  const [origin, setOrigin] = useState('');
-  const [destination, setDestination] = useState('');
+  const [origin, setOrigin] = useState('HSR Layout');
+  const [destination, setDestination] = useState('Koramangala');
+  const [originCoords, setOriginCoords] = useState<{lat: number, lon: number} | null>({lat: 12.9116, lon: 77.6389});
+  const [destCoords, setDestCoords] = useState<{lat: number, lon: number} | null>({lat: 12.9352, lon: 77.6245});
+  const [distance, setDistance] = useState<number | null>(4.5);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [distance, setDistance] = useState<number | null>(null);
 
   const handleCalculate = async () => {
-    if (!origin || !destination) {
-      setError('Please enter both origin and destination.');
-      return;
-    }
     setLoading(true);
     setError('');
-    
-    const [origRes, destRes] = await Promise.all([
-      geocode(origin),
-      geocode(destination)
-    ]);
+
+    const origRes = await geocode(origin);
+    const destRes = await geocode(destination);
 
     if (!origRes || !destRes) {
       setError('Could not find one of the locations. Try being more specific.');
@@ -57,6 +56,8 @@ function RideCard({ accent, onBook }: { accent: string; onBook: (action: UserAct
       return;
     }
 
+    setOriginCoords(origRes);
+    setDestCoords(destRes);
     const dist = calculateDistance(origRes.lat, origRes.lon, destRes.lat, destRes.lon);
     setDistance(dist);
     setLoading(false);
@@ -85,6 +86,13 @@ function RideCard({ accent, onBook }: { accent: string; onBook: (action: UserAct
           <p className="text-xs text-gray-500">Global Real-Time Routing</p>
         </div>
       </div>
+
+      {/* Map visualization */}
+      {distance !== null && originCoords && destCoords && (
+        <div className="h-48 w-full overflow-hidden rounded-xl">
+          <Map origin={[originCoords.lat, originCoords.lon]} destination={[destCoords.lat, destCoords.lon]} />
+        </div>
+      )}
 
       <div className="space-y-3 rounded-xl border border-white/5 bg-white/[0.03] p-4">
         <input 

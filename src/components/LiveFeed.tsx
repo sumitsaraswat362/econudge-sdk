@@ -34,10 +34,14 @@ export default function LiveFeed() {
     return () => es.close();
   }, []);
 
+  const handleItemClick = (event: FeedEvent) => {
+    alert(`Interactive Profile: \nUser: ${event.user}\nPlatform: ${event.platform}\nCO2 Saved: ${event.co2Saved}g`);
+  };
+
   if (events.length === 0) return null;
 
   return (
-    <div className="fixed bottom-6 left-6 z-50 flex flex-col gap-2 max-w-sm pointer-events-none">
+    <div className="fixed bottom-6 left-6 z-50 flex flex-col gap-2 max-w-sm pointer-events-auto">
       <AnimatePresence>
         {events.map((event) => (
           <motion.div
@@ -46,6 +50,9 @@ export default function LiveFeed() {
             animate={{ opacity: 1, x: 0, scale: 1 }}
             exit={{ opacity: 0, x: -100, scale: 0.8 }}
             transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+            onClick={() => handleItemClick(event)}
+            whileHover={{ scale: 1.05, cursor: 'pointer' }}
+            whileTap={{ scale: 0.95 }}
             className="flex items-center gap-3 rounded-2xl border border-white/10 bg-black/60 px-4 py-3 text-sm text-white backdrop-blur-xl shadow-2xl"
           >
             <div className="relative shrink-0">

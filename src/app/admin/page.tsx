@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 interface ESGReport {
   companyName: string;
@@ -51,6 +53,22 @@ export default function AdminPage() {
       .catch(() => setLoading(false));
   }, []);
 
+  const handleDownloadPDF = async () => {
+    const element = document.getElementById('esg-dashboard-content');
+    if (!element) return;
+    
+    // Temporarily add a white background for the PDF since the glass UI is dark
+    const canvas = await html2canvas(element, { backgroundColor: '#0a0f1a', scale: 2 });
+    const imgData = canvas.toDataURL('image/png');
+    
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+    
+    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+    pdf.save(`ESG_Report_${report?.reportId}.pdf`);
+  };
+
   if (loading) {
     return (
       <main className="relative z-10 flex min-h-[60vh] items-center justify-center">
@@ -68,7 +86,7 @@ export default function AdminPage() {
 
   return (
     <main className="relative z-10 mx-auto max-w-5xl px-6 py-12">
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+      <motion.div id="esg-dashboard-content" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="p-4 rounded-3xl">
         {/* Header */}
         <div className="mb-10 flex items-center justify-between">
           <div>
@@ -77,9 +95,17 @@ export default function AdminPage() {
             </h1>
             <p className="mt-1 text-sm text-gray-500">ESG Compliance Dashboard • Report ID: {report.reportId}</p>
           </div>
-          <div className="flex items-center gap-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 px-4 py-2">
-            <span className="pulse-green inline-block h-2 w-2 rounded-full bg-emerald-400" />
-            <span className="text-xs font-semibold text-emerald-400">LIVE</span>
+          <div className="flex items-center gap-4">
+            <button 
+              onClick={handleDownloadPDF}
+              className="bg-white/10 hover:bg-white/20 transition rounded-lg px-4 py-2 text-sm font-bold text-white flex items-center gap-2"
+            >
+              <span>📄</span> Export PDF
+            </button>
+            <div className="flex items-center gap-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 px-4 py-2">
+              <span className="pulse-green inline-block h-2 w-2 rounded-full bg-emerald-400" />
+              <span className="text-xs font-semibold text-emerald-400">LIVE</span>
+            </div>
           </div>
         </div>
 

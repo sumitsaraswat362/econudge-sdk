@@ -17,50 +17,56 @@ function BreathingMesh({ healthRatio }: { healthRatio: number }) {
     healthRatio
   );
   
-  const targetEmissive = new THREE.Color().lerpColors(
-    new THREE.Color('#f59e0b'), // polluted yellow-orange
-    new THREE.Color('#10b981'), // healthy green glow
-    healthRatio
-  );
+  const { impactStats } = useImpact();
+  
+  const score = impactStats.decisionsOverridden;
+  
+  // Base scale starts at 2, grows up to 3 based on score
+  const targetScale = 2 + Math.min(score * 0.1, 1);
+  
+  // Calculate health from 0 (polluted) to 1 (pure)
+  const health = Math.min(score / 10, 1);
 
   useFrame((state) => {
     if (meshRef.current) {
-      // Breathing scale effect (simulating a lung/heartbeat)
-      const scale = 1 + Math.sin(state.clock.elapsedTime * 0.5) * 0.15;
-      meshRef.current.scale.set(scale, scale, scale);
-      
-      // Slow, organic rotation
+      meshRef.current.rotation.x += 0.001;
       meshRef.current.rotation.y += 0.002;
-      meshRef.current.rotation.z += 0.001;
-    }
-
-    if (materialRef.current) {
-      // Smoothly interpolate colors for dynamic shift
-      materialRef.current.color.lerp(targetColor, 0.05);
-      materialRef.current.emissive.lerp(targetEmissive, 0.05);
-
-      // Pulsing color effect
-      const pulse = (Math.sin(state.clock.elapsedTime) + 1) / 2;
-      materialRef.current.emissiveIntensity = 0.5 + pulse * 2.0;
+      
+      const time = state.clock.getElapsedTime();
+      const breathing = Math.sin(time * 0.5) * 0.1;
+      
+      const currentScale = meshRef.current.scale.x;
+      const nextScale = THREE.MathUtils.lerp(currentScale, targetScale + breathing, 0.05);
+      meshRef.current.scale.set(nextScale, nextScale, nextScale);
+      
+      // Calculate color: Orange/Red (polluted) -> Emerald Green (pure)
+      const r = THREE.MathUtils.lerp(0.8, 0.1, health); // Red decreases
+      const g = THREE.MathUtils.lerp(0.3, 0.8, health); // Green increases
+      const b = THREE.MathUtils.lerp(0.1, 0.4, health); // Blue increases slightly
+      
+      const material = meshRef.current.material as THREE.MeshStandardMaterial;
+      material.color.lerp(new THREE.Color(r, g, b), 0.05);
+      material.emissive.lerp(new THREE.Color(r * 0.5, g * 0.5, b * 0.5), 0.05);
     }
   });
 
   return (
-    <Float speed={2} rotationIntensity={0.5} floatIntensity={1}>
-      <mesh ref={meshRef} position={[0, 0, -8]}>
-        <icosahedronGeometry args={[5, 16]} />
-        <meshPhysicalMaterial
-          ref={materialRef}
-          color="#d97706"
-          emissive="#f59e0b"
-          emissiveIntensity={1}
-          wireframe
-          transparent
-          opacity={0.15}
-          roughness={0.2}
-        />
-      </mesh>
-    </Float>
+    <mesh ref={meshRef}>
+      {score < 5 ? (
+        <icosahedronGeometry args={[1, 1]} />
+      ) : score < 15 ? (
+        <torusKnotGeometry args={[0.8, 0.3, 100, 16]} />
+      ) : (
+        <sphereGeometry args={[1.2, 64, 64]} />
+      )}
+      <meshStandardMaterial
+        color="#cc4400"
+        emissive="#441100"
+        wireframe={score < 15}
+        roughness={0.2}
+        metalness={0.8}
+      />
+    </mesh>
   );
 }
 
