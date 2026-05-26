@@ -30,13 +30,13 @@ The portal features an immersive, reactive WebGL breathing background that dynam
 
 ### 2. Live Demo: Real-Time SDK Interception
 We simulated real-world integrations (Mock Uber/Zomato/Amazon). When a user clicks "Book Ride", our engine calculates the CO₂ footprint and triggers the drop-in Nudge Modal.
-<img src="./assets/Book%20Ride.png" width="100%" alt="Book Ride Widget" />
-<img src="./assets/Booke%20ride%202%20.png" width="100%" alt="Book Ride UI" />
+<img src="./assets/Ride%20book%20.png" width="100%" alt="Book Ride Widget" />
+<img src="./assets/Live%20demo%20ride%20.png" width="100%" alt="Book Ride UI" />
 
 ### 3. Gamification: Impact Dashboard & City Wars
 Users track their lifetime carbon savings through a Tamagotchi-style "Virtual Pet" tree and compete in a real-time leaderboard ("City Wars").
-<img src="./assets/Impact%20Dashboard.png" width="100%" alt="Impact Dashboard" />
-<img src="./assets/Impct%20Dashboard%202%20.png" width="100%" alt="Gamification" />
+<img src="./assets/impact.png" width="100%" alt="Impact Dashboard" />
+<img src="./assets/impact%202.png" width="100%" alt="Gamification" />
 
 ### 4. Carbon Offset Marketplace
 Users can spend their gamified "EcoPoints" to fund real-world sustainability projects.
@@ -44,7 +44,10 @@ Users can spend their gamified "EcoPoints" to fund real-world sustainability pro
 
 ### 5. Corporate ESG Admin (B2B Dashboard)
 Companies integrating the SDK get a powerful, automated dashboard tracking their platform's carbon offset, user conversion rates, and SDG alignment for compliance.
-<img src="./assets/Corporate%20admin.png" width="100%" alt="Corporate Admin" />
+<img src="./assets/Admin.png" width="100%" alt="Corporate Admin" />
+
+### 6. Developer Portal (API Keys)
+<img src="./assets/API.png" width="100%" alt="Developer Portal" />
 
 ---
 
