@@ -172,7 +172,7 @@ export default function HomePage() {
       {/* ========================================================= */}
       <footer className="border-t border-white/5 py-10 text-center text-sm text-gray-600 mt-auto">
         <p>
-          Built with 💚 for{' '}
+          Built with 💚 by <span className="font-semibold text-eco-green">Sumit Saraswat</span> for{' '}
           <span className="font-semibold text-eco-green">GreenHack 2026</span>
         </p>
         <p className="mt-1 text-xs text-gray-700">
