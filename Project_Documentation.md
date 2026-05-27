@@ -16,36 +16,14 @@ Currently, living sustainably requires users to download separate carbon-trackin
 ## 2. Solution Approach & System Design
 **EcoNudge SDK** solves this by intercepting decisions at the point of action. We built a drop-in React SDK that enterprise platforms (e.g., Uber, Zomato) can embed into their checkout flow. When a user clicks "Book", our proprietary engine calculates the carbon footprint in under 50ms and injects a real-time, gamified UI suggesting a greener alternative (e.g., "Take an auto instead. Save 192g of CO2").
 
-### Architecture Diagram
-Below is the system architecture demonstrating how the EcoNudge ecosystem operates seamlessly with sub-50ms latency:
-
-```mermaid
-graph TD
-    %% User Flow
-    User([End User]) -->|Clicks Checkout| HostApp[Partner App: Uber/Amazon]
-    
-    %% SDK Integration
-    HostApp -->|Init Checkout| SDK[EcoNudge React SDK]
-    
-    subgraph EcoNudge Edge Engine
-        SDK -->|Intercept Request| Engine[Carbon Predictive Engine]
-        Engine <-->|Query <50ms| DB[(Emission Factors DB)]
-        Engine -->|Return Alternatives| NudgeUI[Dynamic Nudge Modal]
-    end
-    
-    %% Decision & Reward
-    NudgeUI -->|User Accepts Green Option| Gamification[Gamification Service]
-    Gamification -->|Update Health Ratio| Tree[Virtual Tree & City Wars]
-    Gamification -->|Award| EcoPoints[EcoPoints Ledger]
-    
-    %% Enterprise Loop
-    HostApp -->|B2B Reporting| Admin[ESG Corporate Admin Portal]
-    Admin -->|Verify| ESG[Global ESG Compliance]
-    
-    %% Monetization / Real World
-    EcoPoints -->|Redeem| Market[Offset Marketplace]
-    Market -->|Fund| RealWorld[Real-World Tree Planting / Solar]
-```
+### System Architecture Flow
+1. **User Checkout:** End user clicks 'Book' in partner app (e.g. Uber/Amazon).
+2. **SDK Interception:** EcoNudge React SDK intercepts request natively.
+3. **Edge Predictive Engine:** Engine queries Emission Factors DB and calculates exact footprint in **<50ms**.
+4. **Dynamic Nudge UI:** Presents greener alternative to user natively in checkout.
+5. **Gamification Loop:** If accepted, updates Virtual Tree health ratio and awards EcoPoints.
+6. **Enterprise Loop:** Sends conversion data to Corporate ESG Admin Portal for Global Compliance.
+7. **Monetization:** EcoPoints redeemed in Offset Marketplace to fund real-world tree planting.
 
 ## 3. Key Features
 
