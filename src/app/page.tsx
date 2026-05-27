@@ -53,7 +53,7 @@ function HeroStat({ value, label }: { value: string; label: string }) {
 
 export default function HomePage() {
   return (
-    <main className="relative z-10 flex min-h-[calc(100vh-6rem)] flex-col">
+    <main className="relative z-10 flex min-h-[calc(100dvh-6rem)] flex-col">
       {/* ========================================================= */}
       {/*  HERO                                                      */}
       {/* ========================================================= */}
