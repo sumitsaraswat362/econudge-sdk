@@ -65,12 +65,12 @@ function StatPill({
   value: string;
 }) {
   return (
-    <div className="flex flex-col items-center gap-1 rounded-2xl border border-white/[0.08] bg-white/[0.04] px-5 py-3">
-      <span className="text-lg">{emoji}</span>
-      <span className="text-base font-bold tracking-tight text-white">
+    <div className="flex flex-col items-center gap-1 rounded-2xl border border-white/[0.08] bg-white/[0.04] px-2 sm:px-5 py-2 sm:py-3 text-center">
+      <span className="text-lg sm:text-xl">{emoji}</span>
+      <span className="text-sm sm:text-base font-bold tracking-tight text-white">
         {value}
       </span>
-      <span className="text-[11px] font-medium text-white/40">{label}</span>
+      <span className="text-[10px] sm:text-[11px] font-medium text-white/40 leading-tight">{label}</span>
     </div>
   );
 }

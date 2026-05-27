@@ -69,12 +69,11 @@ export default function HomePage() {
           GreenHack 2026 — Live Demo
         </motion.div>
 
-        {/* Heading */}
         <motion.h1
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.7 }}
-          className="gradient-text glow-text max-w-3xl text-5xl font-extrabold leading-tight tracking-tight sm:text-7xl"
+          className="gradient-text glow-text max-w-3xl text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl md:text-7xl"
           style={{ fontFamily: 'var(--font-space), sans-serif' }}
         >
           EcoNudge SDK
